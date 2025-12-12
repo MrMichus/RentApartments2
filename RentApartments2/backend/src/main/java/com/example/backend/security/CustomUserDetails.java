@@ -13,15 +13,17 @@ public class CustomUserDetails implements UserDetails {
     private final String password;
     private final String username;
     private final String surname;
+    private final String phoneNumber;
     private final List<GrantedAuthority> authorities;
 
     public CustomUserDetails(Long id, String email, String password, String username, 
-                            String surname, List<GrantedAuthority> authorities) {
+                            String surname, String phoneNumber, List<GrantedAuthority> authorities) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.username = username;
         this.surname = surname;
+        this.phoneNumber = phoneNumber;
         this.authorities = authorities;
     }
 
@@ -35,6 +37,10 @@ public class CustomUserDetails implements UserDetails {
 
     public String getSurname() {
         return surname;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
     public String getFullName() {

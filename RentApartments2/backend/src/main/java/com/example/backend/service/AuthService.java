@@ -84,6 +84,7 @@ public class AuthService {
                 user.getUsername(),
                 user.getSurname(),
                 user.getId(),
+                user.getPhoneNumber(),
                 List.of("USER")
         );
     }
@@ -110,6 +111,7 @@ public class AuthService {
                 userDetails.getName(),
                 userDetails.getSurname(),
                 userDetails.getId(),
+                userDetails.getPhoneNumber(),
                 roles
         );
     }

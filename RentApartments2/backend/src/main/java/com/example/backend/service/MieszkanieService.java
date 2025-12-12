@@ -92,6 +92,11 @@ public class MieszkanieService {
     public MieszkanieDTO create(MieszkanieRequest request) {
         User currentUser = userService.getCurrentUser();
 
+        // Walidacja limitu zdjęć (max 10)
+        if (request.getZdjeciaUrls() != null && request.getZdjeciaUrls().size() > 10) {
+            throw new RuntimeException("Maksymalna liczba zdjęć to 10");
+        }
+
         // Utwórz lub znajdź adres
         Adres adres = new Adres();
         adres.setUlica(request.getUlica());
@@ -143,6 +148,11 @@ public class MieszkanieService {
 
         if (!isOwner && !isAdmin) {
             throw new RuntimeException("Brak uprawnień do edycji tego ogłoszenia");
+        }
+
+        // Walidacja limitu zdjęć (max 10)
+        if (request.getZdjeciaUrls() != null && request.getZdjeciaUrls().size() > 10) {
+            throw new RuntimeException("Maksymalna liczba zdjęć to 10");
         }
 
         // Aktualizuj adres
