@@ -36,8 +36,12 @@ public class ChatController {
 
     // Pobierz lub utwórz czat z użytkownikiem
     @GetMapping("/user/{userId}")
-    public ResponseEntity<ChatDTO> getOrCreateChat(@PathVariable Long userId) {
-        return ResponseEntity.ok(chatService.getOrCreateChat(userId));
+    public ResponseEntity<?> getOrCreateChat(@PathVariable Long userId) {
+        try {
+            return ResponseEntity.ok(chatService.getOrCreateChat(userId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", e.getMessage()));
+        }
     }
 
     // Pobierz konkretny czat
@@ -52,11 +56,11 @@ public class ChatController {
 
     // Wyślij wiadomość
     @PostMapping("/send")
-    public ResponseEntity<ChatDTO> sendMessage(@Valid @RequestBody ChatMessageRequest request) {
+    public ResponseEntity<?> sendMessage(@Valid @RequestBody ChatMessageRequest request) {
         try {
             return ResponseEntity.ok(chatService.sendMessage(request));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", e.getMessage()));
         }
     }
 }

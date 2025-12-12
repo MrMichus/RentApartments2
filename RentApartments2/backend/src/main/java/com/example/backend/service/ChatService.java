@@ -34,17 +34,30 @@ public class ChatService {
     public List<ChatDTO> getMyChats() {
         User currentUser = userService.getCurrentUser();
         
+        // Usuń ewentualne stare czaty z samym sobą (błędne dane)
+        List<Chat> selfChats = chatRepository.findByUser1IdAndUser2Id(currentUser.getId(), currentUser.getId());
+        if (!selfChats.isEmpty()) {
+            chatRepository.deleteAll(selfChats);
+        }
+        
         // Pobierz czaty gdzie użytkownik jest uczestnikiem
         List<Chat> chats = chatRepository.findByUser1IdOrUser2Id(
                 currentUser.getId(), currentUser.getId());
         
+        // Filtruj czaty z samym sobą (na wszelki wypadek)
         return chats.stream()
+                .filter(chat -> !chat.getUser1Id().equals(chat.getUser2Id()))
                 .map(chat -> convertToDTO(chat, currentUser.getId()))
                 .collect(Collectors.toList());
     }
 
     public ChatDTO getOrCreateChat(Long recipientId) {
         User currentUser = userService.getCurrentUser();
+        
+        // Sprawdź czy użytkownik nie próbuje rozpocząć czatu z samym sobą
+        if (currentUser.getId().equals(recipientId)) {
+            throw new RuntimeException("Nie możesz rozpocząć czatu z samym sobą");
+        }
         
         // Sprawdź czy odbiorca istnieje
         userRepository.findById(recipientId)
@@ -67,6 +80,11 @@ public class ChatService {
 
     public ChatDTO sendMessage(ChatMessageRequest request) {
         User currentUser = userService.getCurrentUser();
+        
+        // Sprawdź czy użytkownik nie próbuje wysłać wiadomości do siebie
+        if (currentUser.getId().equals(request.getRecipientId())) {
+            throw new RuntimeException("Nie możesz wysłać wiadomości do siebie");
+        }
         
         // Sprawdź czy odbiorca istnieje
         userRepository.findById(request.getRecipientId())

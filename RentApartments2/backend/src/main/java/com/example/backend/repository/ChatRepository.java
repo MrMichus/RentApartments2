@@ -18,4 +18,7 @@ public interface ChatRepository extends MongoRepository<Chat, String> {
     // Znajdź konkretny czat między dwoma użytkownikami
     @Query("{ $or: [ { 'user1_id': ?0, 'user2_id': ?1 }, { 'user1_id': ?1, 'user2_id': ?0 } ] }")
     Optional<Chat> findChatBetweenUsers(Long userId1, Long userId2);
+    
+    // Znajdź czaty z samym sobą (user1_id == user2_id)
+    List<Chat> findByUser1IdAndUser2Id(Long user1Id, Long user2Id);
 }
