@@ -243,6 +243,68 @@
     color: #dc2626;
 }
 
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.pagination-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.pagination-btn:disabled {
+    background: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.pagination-pages {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.pagination-page {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination-page:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.pagination-page.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: transparent;
+    color: white;
+}
+
 @media (max-width: 768px) {
     .admin-table {
         min-width: 700px;
@@ -250,5 +312,14 @@
 
     .admin-tabs {
         overflow-x: auto;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+    }
+
+    .pagination-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
     }
 }

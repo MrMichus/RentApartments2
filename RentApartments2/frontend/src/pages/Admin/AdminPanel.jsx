@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { adminService, mieszkaniaService } from '../../api/services';
 import './AdminPanel.css';
 
+const ITEMS_PER_PAGE = 5;
+const USERS_PER_PAGE = 4;
+
 const AdminPanel = () => {
     const [activeTab, setActiveTab] = useState('mieszkania');
     const [users, setUsers] = useState([]);
@@ -10,6 +13,8 @@ const AdminPanel = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [actionLoading, setActionLoading] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [currentUsersPage, setCurrentUsersPage] = useState(1);
 
     useEffect(() => {
         if (activeTab === 'users') {
@@ -130,6 +135,40 @@ const AdminPanel = () => {
         }
     };
 
+    // Paginacja mieszkań
+    const totalPages = Math.ceil(mieszkania.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const currentMieszkania = mieszkania.slice(startIndex, endIndex);
+
+    // Reset strony gdy zmieni się liczba mieszkań
+    useEffect(() => {
+        if (currentPage > totalPages && totalPages > 0) {
+            setCurrentPage(totalPages);
+        }
+    }, [mieszkania.length, totalPages, currentPage]);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    // Paginacja użytkowników
+    const totalUsersPages = Math.ceil(users.length / USERS_PER_PAGE);
+    const usersStartIndex = (currentUsersPage - 1) * USERS_PER_PAGE;
+    const usersEndIndex = usersStartIndex + USERS_PER_PAGE;
+    const currentUsers = users.slice(usersStartIndex, usersEndIndex);
+
+    // Reset strony użytkowników gdy zmieni się ich liczba
+    useEffect(() => {
+        if (currentUsersPage > totalUsersPages && totalUsersPages > 0) {
+            setCurrentUsersPage(totalUsersPages);
+        }
+    }, [users.length, totalUsersPages, currentUsersPage]);
+
+    const handleUsersPageChange = (page) => {
+        setCurrentUsersPage(page);
+    };
+
     return (
         <div className="admin-page">
             <div className="admin-header">
@@ -184,7 +223,7 @@ const AdminPanel = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {mieszkania.map(m => (
+                                    {currentMieszkania.map(m => (
                                         <tr key={m.id}>
                                             <td>
                                                 <div className="mieszkanie-cell">
@@ -229,6 +268,37 @@ const AdminPanel = () => {
                                 </tbody>
                             </table>
                         )}
+
+                        {/* Paginacja */}
+                        {totalPages > 1 && (
+                            <div className="pagination">
+                                <button
+                                    className="pagination-btn"
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                >
+                                    ← Poprzednia
+                                </button>
+                                <div className="pagination-pages">
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                        <button
+                                            key={page}
+                                            className={`pagination-page ${currentPage === page ? 'active' : ''}`}
+                                            onClick={() => handlePageChange(page)}
+                                        >
+                                            {page}
+                                        </button>
+                                    ))}
+                                </div>
+                                <button
+                                    className="pagination-btn"
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    Następna →
+                                </button>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div className="admin-table-container">
@@ -253,7 +323,7 @@ const AdminPanel = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {users.map(u => (
+                                    {currentUsers.map(u => (
                                         <tr key={u.id}>
                                             <td>
                                                 <div className="user-cell">
@@ -289,6 +359,37 @@ const AdminPanel = () => {
                                     ))}
                                 </tbody>
                             </table>
+                        )}
+
+                        {/* Paginacja użytkowników */}
+                        {totalUsersPages > 1 && (
+                            <div className="pagination">
+                                <button
+                                    className="pagination-btn"
+                                    onClick={() => handleUsersPageChange(currentUsersPage - 1)}
+                                    disabled={currentUsersPage === 1}
+                                >
+                                    ← Poprzednia
+                                </button>
+                                <div className="pagination-pages">
+                                    {Array.from({ length: totalUsersPages }, (_, i) => i + 1).map(page => (
+                                        <button
+                                            key={page}
+                                            className={`pagination-page ${currentUsersPage === page ? 'active' : ''}`}
+                                            onClick={() => handleUsersPageChange(page)}
+                                        >
+                                            {page}
+                                        </button>
+                                    ))}
+                                </div>
+                                <button
+                                    className="pagination-btn"
+                                    onClick={() => handleUsersPageChange(currentUsersPage + 1)}
+                                    disabled={currentUsersPage === totalUsersPages}
+                                >
+                                    Następna →
+                                </button>
+                            </div>
                         )}
                     </div>
                 )}
